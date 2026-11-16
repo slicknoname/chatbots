@@ -107,9 +107,16 @@
 <script>
     'use strict';
 
-    const SCHEDULE = { days: [1, 2, 3, 4, 5], from: 13, to: 19 };
-    const LOOKAHEAD_DAYS = 8;
+    const PEAK_DAYS = [1, 2, 3, 4, 5];
+    const PEAK_FROM = 5;
+    const PEAK_TO = 11;
+    const LOOKAHEAD_DAYS = 4;
     const EDGE_DELAY_MS = 250;
+    const PT = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', hourCycle: 'h23'
+    });
     const SIZE_EPSILON = 0.01;
 
     const body = document.body;
@@ -157,17 +164,35 @@
         }
     };
 
-    const isPeak = (now = new Date()) =>
-        SCHEDULE.days.includes(now.getUTCDay()) &&
-        now.getUTCHours() >= SCHEDULE.from &&
-        now.getUTCHours() < SCHEDULE.to;
+    const local = date => {
+        const part = {};
+        for (const { type, value } of PT.formatToParts(date)) part[type] = +value;
+        const midnight = Date.UTC(part.year, part.month - 1, part.day);
+        return { midnight, day: new Date(midnight).getUTCDay(), clock: midnight + (part.hour * 60 + part.minute) * 60000 };
+    };
+
+    const offsetAt = date => Math.round((local(date).clock - date.getTime()) / 60000) * 60000;
+
+    const isPeak = (now = new Date()) => {
+        const { midnight, day, clock } = local(now);
+        const hour = (clock - midnight) / 3600000;
+        return PEAK_DAYS.includes(day) && hour >= PEAK_FROM && hour < PEAK_TO;
+    };
+
+    const edgeAt = (midnight, hour) => {
+        const naive = midnight + hour * 3600000;
+        const once = naive - offsetAt(new Date(naive));
+        return naive - offsetAt(new Date(once));
+    };
 
     const nextEdge = (now = new Date()) => {
-        for (let offset = 0; offset <= LOOKAHEAD_DAYS; offset++) {
-            for (const hour of [SCHEDULE.from, SCHEDULE.to]) {
-                const at = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + offset, hour);
-                if (at <= now.getTime()) continue;
-                if (isPeak(new Date(at - 1)) !== isPeak(new Date(at))) return at;
+        const { midnight } = local(now);
+        for (let i = 0; i < LOOKAHEAD_DAYS; i++) {
+            const day = midnight + i * 86400000;
+            if (!PEAK_DAYS.includes(new Date(day).getUTCDay())) continue;
+            for (const hour of [PEAK_FROM, PEAK_TO]) {
+                const at = edgeAt(day, hour);
+                if (at > now.getTime()) return at;
             }
         }
         return null;

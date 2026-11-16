@@ -12,7 +12,7 @@
 | style | visual baseline | dark theme, rounded cards, glass chips w/ white text, as in current file |
 | stack | zero-dep vanilla | single self-contained index.html, no framework/build/CDN, icons/* only external |
 
-NOTE: Claude card is hidden during peak hours, Monday-Friday 13:00-19:00 UTC.
+NOTE: Claude card is hidden during peak hours, Monday-Friday 05:00-11:00 Pacific Time (America/Los_Angeles, DST-aware).
 
 # Mapping
 | website | best model |
