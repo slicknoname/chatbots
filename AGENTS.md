@@ -22,7 +22,7 @@ NOTE: Claude card is hidden during peak hours, Monday-Friday 05:00-11:00 Pacific
 | meta.ai | Muse Spark 1.3 |
 | chat.together.ai | GLM-5.3 |
 | chat.z.ai | GLM-5.3 |
-| chat.qwen.ai | Qwen3.8 Max |
+| chat.qwen.ai | Qwen4 Max |
 | aistudio.tencent.ai | Hy4 |
 | chat.deepseek.com | DeepSeek V4.1 |
 | chat.stepfun.com | Step 5 Preview |
