@@ -15,6 +15,8 @@
 NOTE: Claude card is hidden during peak hours, Monday-Friday 05:00-11:00 Pacific Time (America/Los_Angeles, DST-aware).
 
 # Mapping
+Scores are the Artificial Analysis Intelligence Index at **high** reasoning effort (not max); models with no index on AA are left unchanged.
+
 | website | best model |
 |---|---|
 | chatgpt.com | GPT-6 Luna |
