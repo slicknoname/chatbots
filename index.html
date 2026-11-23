@@ -23,12 +23,17 @@
     body {
         margin: 0;
         height: 100dvh;
-        display: grid;
-        gap: var(--gap);
         background: var(--bg);
-        place-content: center;
         overflow: hidden;
         padding: var(--pad)
+    }
+
+    #grid {
+        display: grid;
+        gap: var(--gap);
+        width: 100%;
+        height: 100%;
+        place-content: center
     }
 
     a {
@@ -89,7 +94,9 @@
 </style>
 
 <body>
+<div id="grid">
 <a href="https://chat.qwen.ai" data-score="43" data-model="Qwen4 Max"><img alt="Qwen4 Max logo" src="icons/qwen.svg"></a>
+<a href="https://rudder.chat/chat" data-score="32" data-model="TH-Rudder"><img alt="TH-Rudder logo" src="icons/rudder.svg"></a>
 <a id="claude" class="hide" href="https://claude.ai/new" data-score="42" data-model="Sonnet 5.5"><img alt="Sonnet 5.5 logo" src="icons/claude.svg"></a>
 <a href="https://www.meta.ai" data-score="37" data-model="Muse Spark 1.3"><img alt="Muse Spark 1.3 logo" src="icons/meta.svg"></a>
 <a href="https://aistudio.tencent.ai" data-score="35" data-model="Hy4"><img alt="Hy4 logo" src="icons/tencent.svg"></a>
@@ -103,6 +110,7 @@
 <a href="https://chat.stepfun.com/chats/new" data-score="29" data-model="Step 5 Preview"><img alt="Step 5 Preview logo" src="icons/stepfun.svg"></a>
 <a href="https://longcat.ai/chat/" data-score="28" data-model="LongCat-2.5"><img alt="LongCat-2.5 logo" src="icons/longcat.svg"></a>
 <a href="https://chatgpt.com" data-score="21" data-model="GPT-6 Luna"><img alt="GPT-6 Luna logo" src="icons/openai.svg"></a>
+</div>
 <noscript><style>.hide { display: flex !important }</style></noscript>
 <script>
     'use strict';
@@ -119,18 +127,16 @@
     });
     const SIZE_EPSILON = 0.01;
 
-    const body = document.body;
+    const grid = document.getElementById('grid');
     const claude = document.getElementById('claude');
     const px = value => Number.parseFloat(value) || 0;
 
     let rendered = '';
     const fit = () => {
-        const visible = body.querySelectorAll('a:not(.hide)').length;
-        const style = getComputedStyle(body);
-        const pad = px(style.paddingLeft);
-        const gap = px(style.gap);
-        const width = body.clientWidth - pad * 2;
-        const height = body.clientHeight - pad * 2;
+        const visible = grid.querySelectorAll('a:not(.hide)').length;
+        const gap = px(getComputedStyle(grid).gap);
+        const width = grid.clientWidth;
+        const height = grid.clientHeight;
 
         let cols = 1, best = 0;
         for (let c = 1; c <= visible; c++) {
@@ -149,16 +155,16 @@
         const key = `${cols}x${size}`;
         if (key === rendered) return;
         rendered = key;
-        body.style.gridTemplateColumns = `repeat(${cols}, ${size}px)`;
-        body.style.gridAutoRows = `${size}px`;
+        grid.style.gridTemplateColumns = `repeat(${cols}, ${size}px)`;
+        grid.style.gridAutoRows = `${size}px`;
     };
 
     const sortCards = () => {
-        const cards = [...body.querySelectorAll('a[data-score]')];
+        const cards = [...grid.querySelectorAll('a[data-score]')];
         const sorted = [...cards].sort((a, b) => (+b.dataset.score || 0) - (+a.dataset.score || 0));
         for (let i = 0; i < cards.length; i++) {
             if (cards[i] !== sorted[i]) {
-                for (const card of sorted) body.append(card);
+                for (const card of sorted) grid.append(card);
                 return;
             }
         }
@@ -223,7 +229,7 @@
     document.addEventListener('visibilitychange', wake);
     window.addEventListener('pageshow', wake);
 
-    new ResizeObserver(fit).observe(body);
+    new ResizeObserver(fit).observe(grid);
     new MutationObserver(() => { sortCards(); fit(); })
-        .observe(body, { childList: true, subtree: true });
+        .observe(grid, { childList: true, subtree: true });
 </script>

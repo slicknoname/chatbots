@@ -33,3 +33,4 @@ Scores are the Artificial Analysis Intelligence Index at **high** reasoning effo
 | chat.ant-ling.com | Ling-3.2-flash |
 | longcat.ai | LongCat-2.5 |
 | chat.inceptionlabs.ai | Mercury 3 |
+| rudder.chat | TH-Rudder |
